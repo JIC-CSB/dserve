@@ -4,7 +4,7 @@ import os
 import json
 import argparse
 
-from flask import Flask, send_file, jsonify
+from flask import Flask, send_file, jsonify, request
 
 from dtool import DataSet, NotDtoolObject
 
@@ -65,6 +65,39 @@ def server_dataset_item(dataset_name, item_hash):
     data_mimetype = items_by_hash[item_hash]['mimetype']
 
     return send_file(item_path, data_mimetype)
+
+
+@app.route('/dataset/<dataset_name>/item/<item_hash>/coords')
+def find_item_overlay(dataset_name, item_hash):
+
+    dataset_path = os.path.join(DATA_ROOT, dataset_name)
+    dataset = DataSet.from_path(dataset_path)
+
+    coords = dataset.overlays["coords"][item_hash]
+
+    print(coords)
+
+    return jsonify(coords)
+
+
+@app.route('/dataset/<dataset_name>/item/<item_hash>/update_coords',
+           methods=['POST'])
+def set_item_coords(dataset_name, item_hash):
+
+    dataset_path = os.path.join(DATA_ROOT, dataset_name)
+    dataset = DataSet.from_path(dataset_path)
+
+    coords = dataset.overlays["coords"]
+
+    new_coords_value = request.get_json()
+
+    coords[item_hash] = new_coords_value
+
+    dataset.persist_overlay("coords", coords)
+
+    print(new_coords_value)
+
+    return item_hash
 
 
 def find_all_datasets(path):
