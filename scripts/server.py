@@ -1,20 +1,29 @@
-"""Simple image server."""
+"""Simple dataset server."""
 
 import os
 import json
+import argparse
 
 from flask import Flask, send_file, jsonify
 
-from dtool import DataSet
+from dtool import DataSet, NotDtoolObject
 
 app = Flask(__name__)
 
 DATA_ROOT = '/Users/hartleym/data_repo'
 
 
-@app.route('/<project>/<dataset_name>')
-def show_hashes(project, dataset_name):
-    print(project, dataset_name)
+@app.route('/datasets')
+def show_datasets():
+    all_datasets = find_all_datasets(DATA_ROOT)
+
+    dataset_names = list(all_datasets.keys())
+
+    return jsonify(dataset_names)
+
+
+@app.route('/dataset/<dataset_name>')
+def show_dataset_metadata(dataset_name):
 
     dataset_path = os.path.join(DATA_ROOT, dataset_name)
 
@@ -23,28 +32,73 @@ def show_hashes(project, dataset_name):
     return jsonify(dataset.descriptive_metadata)
 
 
-@app.route('/<project>/<dataset>/<file_hash>')
-def hello_world(project, dataset, file_hash):
+@app.route('/dataset/<dataset_name>/hashes')
+def show_dataset_hashes(dataset_name):
 
-    dataset_path = os.path.join(DATA_ROOT, project, dataset)
-    manifest_path = os.path.join(dataset_path, 'manifest.json')
+    dataset_path = os.path.join(DATA_ROOT, dataset_name)
 
-    with open(manifest_path, 'r') as fh:
-        manifest = json.load(fh)
+    dataset = DataSet.from_path(dataset_path)
 
-    dtool_file = os.path.join(dataset_path, '.dtool-dataset')
-    with open(dtool_file) as fh:
-        dataset_info = json.load(fh)
+    file_list = dataset.manifest["file_list"]
 
-    file_list = manifest['file_list']
-    keyed_by_hash = {entry['hash']: entry for entry in file_list}
+    hashes = [item['hash'] for item in file_list]
 
-    manifest_root = dataset_info['manifest_root']
+    return jsonify(hashes)
 
-    data_root = os.path.join(dataset_path, manifest_root)
 
-    path = keyed_by_hash[file_hash]['path']
-    fq_data_path = os.path.join(data_root, path)
-    data_mimetype = keyed_by_hash[file_hash]['mimetype']
+@app.route('/dataset/<dataset_name>/item/<item_hash>')
+def server_dataset_item(dataset_name, item_hash):
 
-    return send_file(fq_data_path, data_mimetype)
+    dataset_path = os.path.join(DATA_ROOT, dataset_name)
+    dataset = DataSet.from_path(dataset_path)
+    # FIXME - BROKEN FUNCTION
+    # item_path = dataset.item_path_from_hash(item_hash)
+
+    items_by_hash = {item['hash']: item
+                     for item in dataset.manifest["file_list"]}
+
+    item_path = os.path.join(
+        dataset._abs_path,
+        dataset.data_directory,
+        items_by_hash[item_hash]['path']
+    )
+    data_mimetype = items_by_hash[item_hash]['mimetype']
+
+    return send_file(item_path, data_mimetype)
+
+
+def find_all_datasets(path):
+    """Return dictionary of datasets in given path, keyed by name of dataset.
+    Names are expected to be unique.
+
+    :param path: Path to directory containing datasets.
+    :returns: Dictionary of datasets.
+    """
+
+    directories = [d
+                   for d in os.listdir(path)
+                   if os.path.isdir(os.path.join(path, d))]
+
+    all_datasets = {}
+    for d in directories:
+        try:
+            dataset = DataSet.from_path(os.path.join(path, d))
+            all_datasets[dataset.name] = dataset
+        except NotDtoolObject:
+            pass
+
+    return all_datasets
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+
+    parser.add_argument('path', help='Path to data collectiont to server')
+
+    args = parser.parse_args()
+
+    print(find_all_datasets(args.path))
+
+
+if __name__ == '__main__':
+    main()
