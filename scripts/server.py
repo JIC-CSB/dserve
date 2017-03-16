@@ -4,11 +4,21 @@ import os
 import json
 import argparse
 
-from flask import Flask, send_file, jsonify, request
+from flask import (
+    Flask,
+    send_file,
+    jsonify,
+    request,
+    url_for
+)
+
+from flask_cors import CORS, cross_origin
 
 from dtool import DataSet, NotDtoolObject
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 DATA_ROOT = '/Users/hartleym/data_repo'
 
@@ -100,6 +110,34 @@ def set_item_coords(dataset_name, item_hash):
     return item_hash
 
 
+def identifiers_where_overlay_is_true(dataset, overlay_name):
+
+    overlays = dataset.overlays
+    selected = [identifier
+                for identifier in dataset.identifiers
+                if overlays[overlay_name][identifier]]
+
+    return selected
+
+
+@app.route('/givemejpegurls', methods=['GET'])
+@cross_origin()
+def get_all_jpegs():
+
+    dataset_name = 'cad_tilling_2016'
+    dataset_path = os.path.join(DATA_ROOT, dataset_name)
+    dataset = DataSet.from_path(dataset_path)
+
+    jpeg_identifiers = identifiers_where_overlay_is_true(dataset, "is_jpeg")
+
+    urls = [url_for("server_dataset_item",
+                    dataset_name=dataset_name,
+                    item_hash=identifier)
+            for identifier in jpeg_identifiers]
+
+    return jsonify(urls)
+
+
 def find_all_datasets(path):
     """Return dictionary of datasets in given path, keyed by name of dataset.
     Names are expected to be unique.
@@ -134,4 +172,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    app.run(debug=True)

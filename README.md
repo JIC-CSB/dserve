@@ -6,5 +6,5 @@ Tool to serve a collection of datasets over HTTP.
 
 To test:
 
-    export FLASK_APP=scripts/flask.py
+    export FLASK_APP=scripts/server.py
     flask run
