@@ -57,6 +57,7 @@ def show_dataset_hashes(dataset_name):
 
 
 @app.route('/dataset/<dataset_name>/item/<item_hash>')
+@cross_origin()
 def server_dataset_item(dataset_name, item_hash):
 
     dataset_path = os.path.join(DATA_ROOT, dataset_name)
