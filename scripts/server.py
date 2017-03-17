@@ -93,18 +93,24 @@ def find_item_overlay(dataset_name, item_hash):
 
 @app.route('/dataset/<dataset_name>/item/<item_hash>/update_coords',
            methods=['POST'])
+@cross_origin()
 def set_item_coords(dataset_name, item_hash):
 
     dataset_path = os.path.join(DATA_ROOT, dataset_name)
     dataset = DataSet.from_path(dataset_path)
 
-    coords = dataset.overlays["coords"]
+    try:
+        coords = dataset.overlays["coords"]
+    except KeyError:
+        coords = dataset.empty_overlay()
+
+    print('req', request.data)
 
     new_coords_value = request.get_json()
 
     coords[item_hash] = new_coords_value
 
-    dataset.persist_overlay("coords", coords)
+    dataset.persist_overlay("coords", coords, overwrite=True)
 
     print(new_coords_value)
 
@@ -131,12 +137,7 @@ def get_all_jpegs():
 
     jpeg_identifiers = identifiers_where_overlay_is_true(dataset, "is_jpeg")
 
-    urls = [url_for("server_dataset_item",
-                    dataset_name=dataset_name,
-                    item_hash=identifier)
-            for identifier in jpeg_identifiers]
-
-    return jsonify(urls)
+    return jsonify(jpeg_identifiers)
 
 
 def find_all_datasets(path):
