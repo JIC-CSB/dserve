@@ -41,9 +41,11 @@ Accept: html
 
 Response:
 
+```
 <html>
 <!-- stuff with hyperlinks that can be clicked -->
 </html>
+```
 
 
 ## Items
