@@ -200,7 +200,7 @@ Response:
 HTTP/1.1 200 OK
 Content-Type: application/json
 
-{ "x": 4.0, "y": 5.6 },
+{ "x": 4.0, "y": 5.6 }
 ```
 
 ### Update the value of an overlay for a specific item
@@ -211,6 +211,8 @@ Request:
 PUT /items/md5sljdflajsdf/coordinates HTTP/1.1
 Host: localhost:5000
 Content-Type: application/json
+
+{ "x": 800.0, "y": -90.5 }
 ```
 
 Response:
