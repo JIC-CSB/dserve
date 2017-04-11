@@ -72,12 +72,14 @@ Content-Type: application/hal+json
       {
         "_links": { "self": { "href": "/items/md5sljdflajsdf" } }, 
         "identifier": "md5sljdflajsdf",
+        "coordinates": { "x": 4.0, "y": 5.6 },
         "mimetype": "image/png",
         "size": 56
       },
       {
         "_links": { "self": { "href": "/items/md5different"  } }, 
         "identifier": "md5different",
+        "coordinates": { "x": 80.8, "y": 3.3 },
         "mimetype": "image/png",
         "size": 102
       }
@@ -106,7 +108,6 @@ Content-Type: application/hal+json
 {
   "_links": {
      "self": { "href": "/overlays"},
-     "mimetype": { "href": "/overlays/mimetype" }, 
      "coordinates": { "href": "/overlays/coordinates" } }, 
   } 
 }
@@ -130,8 +131,10 @@ Content-Type: application/hal+json
 {
   "_links": {
      "self": { "href": "/items/md5sljdflajsdf"},
-     "content": { "href": "/items/md5sljdflajsdf/raw" }
+     "content": { "href": "/items/md5sljdflajsdf/raw" },
+     "coordinates": { "href": "/items/md5sljdflajsdf/coordinates" }
   }
+  "coordinates": { "x": 4.0, "y": 5.6 },
   "mimetype": "image/png",
   "size": 56
 }
@@ -159,22 +162,55 @@ Content-Type: application/json
 ```
 
 
-### Creating a new / replacing an overlay
-
-- *Q: Should it be possible to update the overlay value for an individual item?*
-- *Q: How can one access an empty overlay (to populate a new one)?*
+### Creating a new overlay
 
 Request:
 
 ```
-PUT /overlays/coordinates HTTP/1.1
+POST /overlays/score HTTP/1.1
 Host: localhost:5000
+
+```
+
+Response:
+
+```
+HTTP/1.1 201 CREATED
+```
+
+If it exists:
+
+```
+HTTP/1.1 409 CONFLICT
+```
+
+
+## Value of overlay for a specific item
+
+Request:
+
+```
+GET /items/md5sljdflajsdf/coordinates HTTP/1.1
+Host: localhost:5000
+```
+
+Response:
+
+```
+HTTP/1.1 200 OK
 Content-Type: application/json
 
-{
-  "md5sljdflajsdf": { "x": 800.0, "y": 0.56 },
-  "md5different": { "x": 80.8, "y": 3.3 }
-} 
+{ "x": 4.0, "y": 5.6 },
+```
+
+### Update the value of an overlay for a specific item
+
+Request:
+
+```
+PUT /items/md5sljdflajsdf/coordinates HTTP/1.1
+Host: localhost:5000
+Content-Type: application/json
 ```
 
 Response:
