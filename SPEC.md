@@ -160,6 +160,7 @@ Content-Type: application/json
 ### Creating a new / replacing an overlay
 
 *Q: Should it be possible to update the overlay value from an individual item?*
+*Q: How can one access an empty overlay?*
 
 Request:
 
