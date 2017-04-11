@@ -35,7 +35,7 @@ Request:
 ```
 GET / HTTP/1.1
 Host: localhost:5000
-Accept: html
+Accept: text/html
 
 ```
 
