@@ -154,6 +154,8 @@ def main(dataset, port, debug):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("dataset_path")
+    parser.add_argument("-p", "--port", type=int, default=5000)
+    parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
     dataset = DataSet.from_path(args.dataset_path)
-    main(dataset, 5000, False)
+    main(dataset, args.port, args.debug)
