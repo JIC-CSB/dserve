@@ -30,7 +30,28 @@ def root():
 
 @app.route("/items")
 def items():
-    return ""
+    total_size = 0
+    items = []
+    for i in app._dataset.manifest["file_list"]:
+        total_size += i["size"]
+        item = {
+            "_links": {"self": {"href": "/items/{}".format(i["hash"])}},
+            "identifier": i["hash"],
+            "mimetype": i["mimetype"],
+            "size": i["size"]
+        }
+        items.append(item)
+    content = {
+        "_links": {
+            "self": {"href": "/items"},
+        },
+        "_embedded": {
+            "items": items,
+            "number_of_items": len(items),
+            "total_size": total_size
+        }
+    }
+    return jsonify(content)
 
 
 def main(dataset, port, debug):

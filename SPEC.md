@@ -83,9 +83,9 @@ Content-Type: application/hal+json
         "mimetype": "image/png",
         "size": 102
       }
-    ]
-    number_of_items: 2,
-    total_size: 158
+    ],
+    "number_of_items": 2,
+    "total_size": 158
   } 
 }
 ```
