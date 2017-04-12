@@ -57,6 +57,20 @@ def items():
     return jsonify(content)
 
 
+@app.route("/overlays")
+def overalys():
+    overlays = app._dataset.overlays
+    content = {
+        "_links": {
+            "self": {"href": "/overlays"}},
+    }
+    for overlay_name in overlays.keys():
+        value = {"href": "/overlays/{}".format(overlay_name)}
+        content["_links"][overlay_name] = value
+    return jsonify(content)
+
+
+
 def main(dataset, port, debug):
     app._dataset = dataset
     app.run(port=port, debug=debug)

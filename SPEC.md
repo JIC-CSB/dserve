@@ -109,8 +109,7 @@ Content-Type: application/hal+json
   "_links": {
      "self": { "href": "/overlays"},
      "coordinates": { "href": "/overlays/coordinates" } }, 
-  } 
-}
+} 
 ```
 
 ## Specific item
