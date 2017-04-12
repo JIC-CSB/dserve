@@ -8,6 +8,7 @@ from flask import (
     jsonify,
     send_file,
     abort,
+    request,
 )
 
 from dtoolcore import DataSet
@@ -136,13 +137,23 @@ def specific_overlay(overlay_name):
         abort(404)
     return jsonify(overlay)
 
+def creaate_new_overlay(overlay_name):
+    empty_overlay = app._dataset.empty_overlay()
+    try:
+        app._dataset.persist_overlay(overlay_name, empty_overlay)
+    except IOError:
+        abort(409)
+    return "", 201
+
 
 @app.route("/overlays")
-@app.route("/overlays/<overlay_name>")
+@app.route("/overlays/<overlay_name>", methods=["GET", "PUT"])
 def overalys(overlay_name=None):
     if overlay_name is None:
         return overlay_root()
     else:
+        if request.method == "PUT":
+            return creaate_new_overlay(overlay_name)
         return specific_overlay(overlay_name)
 
 
