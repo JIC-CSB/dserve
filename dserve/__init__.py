@@ -28,8 +28,7 @@ def root():
     return jsonify(content)
 
 
-@app.route("/items")
-def items():
+def items_root():
     overlays = app._dataset.overlays
     total_size = 0
     items = []
@@ -57,6 +56,35 @@ def items():
     return jsonify(content)
 
 
+def specific_item(identifier):
+    item = app._dataset.item_from_hash(identifier)
+    content = {
+        "_links": {
+            "self": {"href": "/items/{}".format(identifier)},
+            "content": {"href": "/items/{}/raw".format(identifier)},
+        },
+        "mimetype": item["mimetype"],
+        "size": item["size"]
+    }
+
+    overlays = app._dataset.overlays
+    for overlay_name, overlay in overlays.items():
+        olink = {"href": "/items/{}/{}".format(identifier, overlay_name)}
+        content["_links"][overlay_name] = olink
+        content[overlay_name] = overlay[identifier]
+
+    return jsonify(content)
+
+
+@app.route("/items")
+@app.route("/items/<identifier>")
+def items(identifier=None):
+    if identifier is None:
+        return items_root()
+    else:
+        return specific_item(identifier)
+
+
 @app.route("/overlays")
 def overalys():
     overlays = app._dataset.overlays
@@ -68,7 +96,6 @@ def overalys():
         value = {"href": "/overlays/{}".format(overlay_name)}
         content["_links"][overlay_name] = value
     return jsonify(content)
-
 
 
 def main(dataset, port, debug):

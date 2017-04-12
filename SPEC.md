@@ -132,7 +132,7 @@ Content-Type: application/hal+json
      "self": { "href": "/items/md5sljdflajsdf"},
      "content": { "href": "/items/md5sljdflajsdf/raw" },
      "coordinates": { "href": "/items/md5sljdflajsdf/coordinates" }
-  }
+  },
   "coordinates": { "x": 4.0, "y": 5.6 },
   "mimetype": "image/png",
   "size": 56

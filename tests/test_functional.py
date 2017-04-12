@@ -73,3 +73,25 @@ def test_overlays():
             "coordinates": {"href": "/overlays/coordinates"}},
     }
     assert r.json() == expected_content
+
+
+def test_specific_item():
+    url = "/".join([
+        TEST_SERVER,
+        "items",
+        "290d3f1a902c452ce1c184ed793b1d6b83b59164"])
+    r = requests.get(url)
+    assert r.status_code == 200
+    assert r.headers['content-type'].find("json") != -1
+
+    expected_content = {
+        "_links": {
+            "self": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164"},  # NOQA
+            "content": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164/raw"},  # NOQA
+            "coordinates": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164/coordinates"}  # NOQA
+        },
+        "coordinates": {"x": 4.0, "y": 5.6},
+        "mimetype": "image/png",
+        "size": 276
+    }
+    assert r.json() == expected_content
