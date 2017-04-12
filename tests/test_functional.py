@@ -34,3 +34,8 @@ def test_root():
     }
     assert content == expected_content
 
+
+def test_items():
+    url = "/".join([TEST_SERVER, "items"])
+    r = requests.get(url)
+    assert r.status_code == 200

@@ -1,7 +1,6 @@
 """Script for running the dserve server."""
 
 import argparse
-import json
 
 from flask import (
     Flask,
@@ -12,13 +11,14 @@ from dtoolcore import DataSet
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def root():
     content = {
         "_links": {
-           "self": { "href": "/"},
-           "items": { "href": "/items" },
-           "overlays": { "href": "/overlays" }
+            "self": {"href": "/"},
+            "items": {"href": "/items"},
+            "overlays": {"href": "/overlays"}
         },
         "uuid": app._dataset._admin_metadata["uuid"],
         "dtool_version": app._dataset._admin_metadata["dtool_version"],
@@ -27,9 +27,16 @@ def root():
     }
     return jsonify(content)
 
+
+@app.route("/items")
+def items():
+    return ""
+
+
 def main(dataset, port, debug):
     app._dataset = dataset
     app.run(port=port, debug=debug)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
