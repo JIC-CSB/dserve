@@ -8,3 +8,4 @@ def test_root():
     url = TEST_SERVER
     r = requests.get(url)
     assert r.status_code == 200
+    assert r.headers['content-type'].find("json") != -1
