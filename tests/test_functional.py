@@ -1,16 +1,30 @@
 """Functional tests for dserve server."""
-import os
 
+import os
+import signal
+import subprocess
+import time
+
+import pytest
 import requests
 
 HERE = os.path.dirname(__file__)
+APP = os.path.join(HERE, "..", "dserve", "__init__.py")
 SAMPLE_DATASET_PATH = os.path.join(HERE, "data", "cotyledon_images")
 
 PORT = 5000
 TEST_SERVER = "http://127.0.0.1:{}".format(PORT)
 
 
-def test_root_route():
+@pytest.fixture(scope="module")
+def run_server():
+    server = subprocess.Popen(["python", APP, SAMPLE_DATASET_PATH])
+    time.sleep(1)
+    yield
+    server.terminate()
+
+
+def test_root_route(run_server):
     url = TEST_SERVER
     r = requests.get(url)
     assert r.status_code == 200
@@ -30,7 +44,7 @@ def test_root_route():
     assert r.json() == expected_content
 
 
-def test_items_route():
+def test_items_route(run_server):
     url = "/".join([TEST_SERVER, "items"])
     r = requests.get(url)
     assert r.status_code == 200
@@ -61,7 +75,7 @@ def test_items_route():
     assert r.json() == expected_content
 
 
-def test_overlays_route():
+def test_overlays_route(run_server):
     url = "/".join([TEST_SERVER, "overlays"])
     r = requests.get(url)
     assert r.status_code == 200
@@ -75,7 +89,7 @@ def test_overlays_route():
     assert r.json() == expected_content
 
 
-def test_specific_item_route():
+def test_specific_item_route(run_server):
     url = "/".join([
         TEST_SERVER,
         "items",
@@ -97,7 +111,7 @@ def test_specific_item_route():
     assert r.json() == expected_content
 
 
-def test_nonexisitng_specific_item_route():
+def test_nonexisitng_specific_item_route(run_server):
     url = "/".join([
         TEST_SERVER,
         "items",
@@ -106,7 +120,7 @@ def test_nonexisitng_specific_item_route():
     assert r.status_code == 404
 
 
-def test_specific_item_raw_route():
+def test_specific_item_raw_route(run_server):
     url = "/".join([
         TEST_SERVER,
         "items",
@@ -118,7 +132,7 @@ def test_specific_item_raw_route():
     assert int(r.headers['content-length']) == 276
 
 
-def test_nonexisting_specific_item_raw_route():
+def test_nonexisting_specific_item_raw_route(run_server):
     url = "/".join([
         TEST_SERVER,
         "items",
@@ -128,7 +142,7 @@ def test_nonexisting_specific_item_raw_route():
     assert r.status_code == 404
 
 
-def test_specific_item_overlay_route():
+def test_specific_item_overlay_route(run_server):
     url = "/".join([
         TEST_SERVER,
         "items",
@@ -142,7 +156,7 @@ def test_specific_item_overlay_route():
     assert r.json() == expected_content
 
 
-def test_nonexisting_specific_item_overlay_route():
+def test_nonexisting_specific_item_overlay_route(run_server):
     url = "/".join([
         TEST_SERVER,
         "items",
@@ -152,7 +166,7 @@ def test_nonexisting_specific_item_overlay_route():
     assert r.status_code == 404
 
 
-def test_specific_item_nonexisting_overlay_route():
+def test_specific_item_nonexisting_overlay_route(run_server):
     url = "/".join([
         TEST_SERVER,
         "items",
@@ -162,7 +176,7 @@ def test_specific_item_nonexisting_overlay_route():
     assert r.status_code == 404
 
 
-def test_specific_overlay_route():
+def test_specific_overlay_route(run_server):
     url = "/".join([TEST_SERVER, "overlays", "coordinates"])
     r = requests.get(url)
     assert r.status_code == 200
@@ -175,7 +189,7 @@ def test_specific_overlay_route():
     assert r.json() == expected_content
 
 
-def test_nonexisting_specific_overlay_route():
+def test_nonexisting_specific_overlay_route(run_server):
     url = "/".join([TEST_SERVER, "overlays", "nonsese"])
     r = requests.get(url)
     assert r.status_code == 404

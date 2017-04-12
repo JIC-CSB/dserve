@@ -156,4 +156,4 @@ if __name__ == '__main__':
     parser.add_argument("dataset_path")
     args = parser.parse_args()
     dataset = DataSet.from_path(args.dataset_path)
-    main(dataset, 5000, True)
+    main(dataset, 5000, False)
