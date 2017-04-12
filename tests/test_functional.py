@@ -10,7 +10,7 @@ PORT = 5000
 TEST_SERVER = "http://127.0.0.1:{}".format(PORT)
 
 
-def test_root():
+def test_root_route():
     url = TEST_SERVER
     r = requests.get(url)
     assert r.status_code == 200
@@ -30,7 +30,7 @@ def test_root():
     assert r.json() == expected_content
 
 
-def test_items():
+def test_items_route():
     url = "/".join([TEST_SERVER, "items"])
     r = requests.get(url)
     assert r.status_code == 200
@@ -61,7 +61,7 @@ def test_items():
     assert r.json() == expected_content
 
 
-def test_overlays():
+def test_overlays_route():
     url = "/".join([TEST_SERVER, "overlays"])
     r = requests.get(url)
     assert r.status_code == 200
@@ -75,7 +75,7 @@ def test_overlays():
     assert r.json() == expected_content
 
 
-def test_specific_item():
+def test_specific_item_route():
     url = "/".join([
         TEST_SERVER,
         "items",
@@ -95,3 +95,15 @@ def test_specific_item():
         "size": 276
     }
     assert r.json() == expected_content
+
+
+def test_specific_item_raw_route():
+    url = "/".join([
+        TEST_SERVER,
+        "items",
+        "290d3f1a902c452ce1c184ed793b1d6b83b59164",
+        "raw"])
+    r = requests.get(url)
+    assert r.status_code == 200
+    assert r.headers['content-type'].find("png") != -1
+    assert int(r.headers['content-length']) == 276

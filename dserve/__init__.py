@@ -1,10 +1,12 @@
 """Script for running the dserve server."""
 
+import os
 import argparse
 
 from flask import (
     Flask,
     jsonify,
+    send_file,
 )
 
 from dtoolcore import DataSet
@@ -83,6 +85,17 @@ def items(identifier=None):
         return items_root()
     else:
         return specific_item(identifier)
+
+
+@app.route("/items/<identifier>/raw")
+def raw_item(identifier):
+    item = app._dataset.item_from_hash(identifier)
+    item_path = os.path.join(
+        dataset._abs_path,
+        dataset.data_directory,
+        item["path"]
+    )
+    return send_file(item_path, item["mimetype"])
 
 
 @app.route("/overlays")
