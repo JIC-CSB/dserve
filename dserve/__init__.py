@@ -98,6 +98,13 @@ def raw_item(identifier):
     return send_file(item_path, item["mimetype"])
 
 
+@app.route("/items/<identifier>/<overlay>")
+def item_overlay_content(identifier, overlay):
+    overlays = app._dataset.overlays
+    requested_overlay = overlays[overlay]
+    return jsonify(requested_overlay[identifier])
+
+
 @app.route("/overlays")
 def overalys():
     overlays = app._dataset.overlays
