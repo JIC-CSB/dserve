@@ -14,7 +14,18 @@ app = Flask(__name__)
 
 @app.route("/")
 def root():
-    return jsonify(app._dataset._admin_metadata)
+    content = {
+        "_links": {
+           "self": { "href": "/"},
+           "items": { "href": "/items" },
+           "overlays": { "href": "/overlays" }
+        },
+        "uuid": app._dataset._admin_metadata["uuid"],
+        "dtool_version": app._dataset._admin_metadata["dtool_version"],
+        "name": app._dataset._admin_metadata["name"],
+        "creator_username": app._dataset._admin_metadata["creator_username"],
+    }
+    return jsonify(content)
 
 def main(dataset, port, debug):
     app._dataset = dataset

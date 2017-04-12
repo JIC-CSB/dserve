@@ -22,9 +22,9 @@ Content-Type: application/hal+json
      "self": { "href": "/"},
      "items": { "href": "/items" },
      "overlays": { "href": "/overlays" }
-  }
+  },
   "uuid": "C4F5E4AB-A4CE-4DD7-91A3-0F4D7C646FE5",
-  "dtool_version": 0.13.0,
+  "dtool_version": "0.13.0",
   "name": "cotyledon_images",
   "creator_username": "olssont",
 }

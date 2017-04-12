@@ -20,3 +20,17 @@ def test_root():
 
     content = r.json()
     assert "uuid" in content
+
+    expected_content = {
+        "_links": {
+           "self": { "href": "/"},
+           "items": { "href": "/items" },
+           "overlays": { "href": "/overlays" }
+        },
+        "uuid": "4396cc68-2ded-4ca6-9992-bd24c11f5e09",
+        "dtool_version": "0.12.1",
+        "name": "cotyledon_images",
+        "creator_username": "olssont",
+    }
+    assert content == expected_content
+
