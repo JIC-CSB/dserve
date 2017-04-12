@@ -1,3 +1,1 @@
-dtoolcore
-flask
-flask_cors
+-e .
