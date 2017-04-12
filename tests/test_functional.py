@@ -44,11 +44,13 @@ def test_items():
             "items": [{
                 "_links": {"self": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164"}},  # NOQA
                 "identifier": "290d3f1a902c452ce1c184ed793b1d6b83b59164",
+                "coordinates": { "x": 4.0, "y": 5.6 },
                 "mimetype": "image/png",
                 "size": 276
             }, {
                 "_links": {"self": {"href": "/items/09648d19e11f0b20e5473594fc278afbede3c9a4"}},  # NOQA
                 "identifier": "09648d19e11f0b20e5473594fc278afbede3c9a4",
+                "coordinates": { "x": 80.8, "y": 3.3 },
                 "mimetype": "image/png",
                 "size": 276
             }],

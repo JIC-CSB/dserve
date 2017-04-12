@@ -30,6 +30,7 @@ def root():
 
 @app.route("/items")
 def items():
+    overlays = app._dataset.overlays
     total_size = 0
     items = []
     for i in app._dataset.manifest["file_list"]:
@@ -40,6 +41,8 @@ def items():
             "mimetype": i["mimetype"],
             "size": i["size"]
         }
+        for key, value in overlays.items():
+            item[key] = value[i["hash"]]
         items.append(item)
     content = {
         "_links": {
