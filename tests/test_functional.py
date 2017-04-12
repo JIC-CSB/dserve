@@ -160,3 +160,22 @@ def test_specific_item_nonexisting_overlay_route():
         "nonsense"])
     r = requests.get(url)
     assert r.status_code == 404
+
+
+def test_specific_overlay_route():
+    url = "/".join([TEST_SERVER, "overlays", "coordinates"])
+    r = requests.get(url)
+    assert r.status_code == 200
+    assert r.headers['content-type'].find("json") != -1
+
+    expected_content = {
+        "290d3f1a902c452ce1c184ed793b1d6b83b59164": {"x": 4.0, "y": 5.6},
+        "09648d19e11f0b20e5473594fc278afbede3c9a4": {"x": 80.8, "y": 3.3}
+    }
+    assert r.json() == expected_content
+
+
+def test_nonexisting_specific_overlay_route():
+    url = "/".join([TEST_SERVER, "overlays", "nonsese"])
+    r = requests.get(url)
+    assert r.status_code == 404

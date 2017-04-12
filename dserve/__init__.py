@@ -116,8 +116,7 @@ def item_overlay_content(identifier, overlay):
     return jsonify(value)
 
 
-@app.route("/overlays")
-def overalys():
+def overlay_root():
     overlays = app._dataset.overlays
     content = {
         "_links": {
@@ -127,6 +126,24 @@ def overalys():
         value = {"href": "/overlays/{}".format(overlay_name)}
         content["_links"][overlay_name] = value
     return jsonify(content)
+
+
+def specific_overlay(overlay_name):
+    overlays = app._dataset.overlays
+    try:
+        overlay = overlays[overlay_name]
+    except KeyError:
+        abort(404)
+    return jsonify(overlay)
+
+
+@app.route("/overlays")
+@app.route("/overlays/<overlay_name>")
+def overalys(overlay_name=None):
+    if overlay_name is None:
+        return overlay_root()
+    else:
+        return specific_overlay(overlay_name)
 
 
 def main(dataset, port, debug):
