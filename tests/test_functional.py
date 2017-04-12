@@ -37,7 +37,7 @@ def run_write_server(request):
     shutil.copytree(SAMPLE_DATASET_PATH, tmp_dataset_path)
 
     port = "5001"
-    server = subprocess.Popen(["python", APP, tmp_dataset_path, "-p", port])
+    server = subprocess.Popen(["python", APP, tmp_dataset_path, "-p", port,])
     time.sleep(1)
 
     @request.addfinalizer
@@ -240,3 +240,58 @@ def test_create_new_overlay_does_not_overwrite(run_write_server):
     assert r.status_code == 201
     r = requests.put(url)
     assert r.status_code == 409
+
+
+def test_update_specific_item_in_overlay(run_write_server):
+    url = "/".join([
+        run_write_server,
+        "items",
+        "290d3f1a902c452ce1c184ed793b1d6b83b59164",
+        "coordinates"])
+    r = requests.get(url)
+    assert r.status_code == 200
+    assert r.headers['content-type'].find("json") != -1
+
+    expected_content = {"x": 4.0, "y": 5.6}
+    assert r.json() == expected_content
+
+    # application/json content-type not specified.
+    r = requests.put(url, data={"x": 10.0, "y": -7.0})
+    assert r.status_code == 422
+
+    r = requests.put(
+        url,
+        data='{"x": 10.0, "y": -7.0}',
+        headers={'content-type':'application/json'})
+    assert r.status_code == 201
+
+    r = requests.get(url)
+    expected_content = {"x": 10.0, "y": -7.0}
+    assert r.json() == expected_content
+
+
+def test_update_specific_item_in_nonexisting_overlay_404(run_write_server):
+    url = "/".join([
+        run_write_server,
+        "items",
+        "290d3f1a902c452ce1c184ed793b1d6b83b59164",
+        "nonexisting"])
+
+    r = requests.put(
+        url,
+        data='{"x": 10.0, "y": -7.0}',
+        headers={'content-type':'application/json'})
+    assert r.status_code == 404
+
+def test_update_specific_item_in_overlay(run_write_server):
+    url = "/".join([
+        run_write_server,
+        "items",
+        "nonsense",
+        "coordinates"])
+
+    r = requests.put(
+        url,
+        data='{"x": 10.0, "y": -7.0}',
+        headers={'content-type':'application/json'})
+    assert r.status_code == 404

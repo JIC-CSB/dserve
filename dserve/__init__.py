@@ -106,15 +106,27 @@ def raw_item(identifier):
     return send_file(item_path, item["mimetype"])
 
 
-@app.route("/items/<identifier>/<overlay>")
+@app.route("/items/<identifier>/<overlay>", methods=["GET", "PUT"])
 def item_overlay_content(identifier, overlay):
     overlays = app._dataset.overlays
     try:
         requested_overlay = overlays[overlay]
-        value = requested_overlay[identifier]
+        requested_overlay[identifier]
     except KeyError:
         abort(404)
-    return jsonify(value)
+
+    if request.method == "PUT":
+        if not request.is_json:
+            abort(422)
+        new_value = request.get_json()
+        requested_overlay[identifier] = new_value
+        app._dataset.persist_overlay(
+            overlay, requested_overlay, overwrite=True)
+        return "", 201
+    else:
+        value = requested_overlay[identifier]
+        return jsonify(value)
+
 
 
 def overlay_root():
@@ -136,6 +148,7 @@ def specific_overlay(overlay_name):
     except KeyError:
         abort(404)
     return jsonify(overlay)
+
 
 def creaate_new_overlay(overlay_name):
     empty_overlay = app._dataset.empty_overlay()
