@@ -1,0 +1,20 @@
+{
+  "hash_function": "shasum", 
+  "file_list": [
+    {
+      "mimetype": "image/png", 
+      "path": "first_image.png", 
+      "mtime": 1491989058.0, 
+      "hash": "290d3f1a902c452ce1c184ed793b1d6b83b59164", 
+      "size": 276
+    }, 
+    {
+      "mimetype": "image/png", 
+      "path": "tiny.png", 
+      "mtime": 1491989069.0, 
+      "hash": "09648d19e11f0b20e5473594fc278afbede3c9a4", 
+      "size": 276
+    }
+  ], 
+  "dtool_version": "0.12.1"
+}

@@ -1,0 +1,16 @@
+---
+
+project_name: cotyledon_images
+dataset_name: cotyledon_images
+confidential: False
+personally_identifiable_information: False
+owners:
+  - name: Tjelvar Olsson
+    email: tjelvar.olsson@jic.ac.uk
+    username: olssont
+creation_date: 2017-04-12
+# links:
+#  - http://doi.dx.org/your_doi
+#  - http://github.com/your_code_repository
+# budget_codes:
+#  - E.g. CCBS1H10S
