@@ -7,6 +7,7 @@ from flask import (
     Flask,
     jsonify,
     send_file,
+    abort,
 )
 
 from dtoolcore import DataSet
@@ -59,7 +60,10 @@ def items_root():
 
 
 def specific_item(identifier):
-    item = app._dataset.item_from_hash(identifier)
+    try:
+        item = app._dataset.item_from_hash(identifier)
+    except KeyError:
+        abort(404)
     content = {
         "_links": {
             "self": {"href": "/items/{}".format(identifier)},
@@ -89,7 +93,10 @@ def items(identifier=None):
 
 @app.route("/items/<identifier>/raw")
 def raw_item(identifier):
-    item = app._dataset.item_from_hash(identifier)
+    try:
+        item = app._dataset.item_from_hash(identifier)
+    except KeyError:
+        abort(404)
     item_path = os.path.join(
         dataset._abs_path,
         dataset.data_directory,
@@ -101,8 +108,12 @@ def raw_item(identifier):
 @app.route("/items/<identifier>/<overlay>")
 def item_overlay_content(identifier, overlay):
     overlays = app._dataset.overlays
-    requested_overlay = overlays[overlay]
-    return jsonify(requested_overlay[identifier])
+    try:
+        requested_overlay = overlays[overlay]
+        value = requested_overlay[identifier]
+    except KeyError:
+        abort(404)
+    return jsonify(value)
 
 
 @app.route("/overlays")

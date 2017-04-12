@@ -97,6 +97,15 @@ def test_specific_item_route():
     assert r.json() == expected_content
 
 
+def test_nonexisitng_specific_item_route():
+    url = "/".join([
+        TEST_SERVER,
+        "items",
+        "nonsense"])
+    r = requests.get(url)
+    assert r.status_code == 404
+
+
 def test_specific_item_raw_route():
     url = "/".join([
         TEST_SERVER,
@@ -107,6 +116,16 @@ def test_specific_item_raw_route():
     assert r.status_code == 200
     assert r.headers['content-type'].find("png") != -1
     assert int(r.headers['content-length']) == 276
+
+
+def test_nonexisting_specific_item_raw_route():
+    url = "/".join([
+        TEST_SERVER,
+        "items",
+        "nonsense",
+        "raw"])
+    r = requests.get(url)
+    assert r.status_code == 404
 
 
 def test_specific_item_overlay_route():
@@ -121,3 +140,23 @@ def test_specific_item_overlay_route():
 
     expected_content = {"x": 4.0, "y": 5.6}
     assert r.json() == expected_content
+
+
+def test_nonexisting_specific_item_overlay_route():
+    url = "/".join([
+        TEST_SERVER,
+        "items",
+        "nonsense",
+        "coordinates"])
+    r = requests.get(url)
+    assert r.status_code == 404
+
+
+def test_specific_item_nonexisting_overlay_route():
+    url = "/".join([
+        TEST_SERVER,
+        "items",
+        "290d3f1a902c452ce1c184ed793b1d6b83b59164",
+        "nonsense"])
+    r = requests.get(url)
+    assert r.status_code == 404
