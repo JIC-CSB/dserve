@@ -1,5 +1,4 @@
 """Functional tests for dserve server."""
-
 import os
 
 import requests
@@ -43,12 +42,12 @@ def test_items():
         },
         "_embedded": {
             "items": [{
-                "_links": {"self": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164"}},
+                "_links": {"self": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164"}},  # NOQA
                 "identifier": "290d3f1a902c452ce1c184ed793b1d6b83b59164",
                 "mimetype": "image/png",
                 "size": 276
             }, {
-                "_links": {"self": {"href": "/items/09648d19e11f0b20e5473594fc278afbede3c9a4"}},
+                "_links": {"self": {"href": "/items/09648d19e11f0b20e5473594fc278afbede3c9a4"}},  # NOQA
                 "identifier": "09648d19e11f0b20e5473594fc278afbede3c9a4",
                 "mimetype": "image/png",
                 "size": 276

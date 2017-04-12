@@ -1,7 +1,6 @@
 """Simple dataset server."""
 
 import os
-import json
 import argparse
 
 from flask import (
@@ -9,7 +8,6 @@ from flask import (
     send_file,
     jsonify,
     request,
-    url_for
 )
 
 from flask_cors import CORS, cross_origin
