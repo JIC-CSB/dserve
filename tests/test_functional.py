@@ -259,6 +259,13 @@ def test_update_specific_item_in_overlay(run_write_server):
     r = requests.put(url, data={"x": 10.0, "y": -7.0})
     assert r.status_code == 422
 
+    # application/json content-type specified, but data is not json.
+    r = requests.put(
+        url,
+        data={"x": 10.0, "y": -7.0},
+        headers={'content-type':'application/json'})
+    assert r.status_code == 400
+
     r = requests.put(
         url,
         data='{"x": 10.0, "y": -7.0}',
@@ -283,7 +290,7 @@ def test_update_specific_item_in_nonexisting_overlay_404(run_write_server):
         headers={'content-type':'application/json'})
     assert r.status_code == 404
 
-def test_update_specific_item_in_overlay(run_write_server):
+def test_update_specific_nonsese_item_in_overlay_404(run_write_server):
     url = "/".join([
         run_write_server,
         "items",

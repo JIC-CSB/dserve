@@ -34,6 +34,7 @@ def root():
 
 def items_root():
     overlays = app._dataset.overlays
+
     total_size = 0
     items = []
     for i in app._dataset.manifest["file_list"]:
@@ -47,6 +48,7 @@ def items_root():
         for key, value in overlays.items():
             item[key] = value[i["hash"]]
         items.append(item)
+
     content = {
         "_links": {
             "self": {"href": "/items"},
@@ -123,10 +125,9 @@ def item_overlay_content(identifier, overlay):
         app._dataset.persist_overlay(
             overlay, requested_overlay, overwrite=True)
         return "", 201
-    else:
+    elif request.method == "GET":
         value = requested_overlay[identifier]
         return jsonify(value)
-
 
 
 def overlay_root():
@@ -167,7 +168,8 @@ def overalys(overlay_name=None):
     else:
         if request.method == "PUT":
             return creaate_new_overlay(overlay_name)
-        return specific_overlay(overlay_name)
+        elif request.method == "GET":
+            return specific_overlay(overlay_name)
 
 
 def main(dataset, port, debug):
