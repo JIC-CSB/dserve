@@ -10,13 +10,16 @@ from flask import (
     abort,
     request,
 )
+from flask_cors import CORS, cross_origin
 
 from dtoolcore import DataSet
 
 app = Flask(__name__)
+cors = CORS(app)
 
 
 @app.route("/")
+@cross_origin()
 def root():
     content = {
         "_links": {
@@ -87,6 +90,7 @@ def specific_item(identifier):
 
 @app.route("/items")
 @app.route("/items/<identifier>")
+@cross_origin()
 def items(identifier=None):
     if identifier is None:
         return items_root()
@@ -95,6 +99,7 @@ def items(identifier=None):
 
 
 @app.route("/items/<identifier>/raw")
+@cross_origin()
 def raw_item(identifier):
     try:
         item = app._dataset.item_from_hash(identifier)
@@ -109,6 +114,7 @@ def raw_item(identifier):
 
 
 @app.route("/items/<identifier>/<overlay>", methods=["GET", "PUT"])
+@cross_origin()
 def item_overlay_content(identifier, overlay):
     overlays = app._dataset.overlays
     try:
@@ -162,6 +168,7 @@ def creaate_new_overlay(overlay_name):
 
 @app.route("/overlays")
 @app.route("/overlays/<overlay_name>", methods=["GET", "PUT"])
+@cross_origin()
 def overalys(overlay_name=None):
     if overlay_name is None:
         return overlay_root()
