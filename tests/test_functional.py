@@ -53,6 +53,7 @@ def test_root_route(run_server):
     r = requests.get(url)
     assert r.status_code == 200
     assert r.headers['content-type'].find("json") != -1
+    assert r.headers['access-control-allow-origin'] == "*"
 
     expected_content = {
         "_links": {
@@ -73,6 +74,7 @@ def test_items_route(run_server):
     r = requests.get(url)
     assert r.status_code == 200
     assert r.headers['content-type'].find("json") != -1
+    assert r.headers['access-control-allow-origin'] == "*"
 
     expected_content = {
         "_links": {
@@ -104,6 +106,7 @@ def test_overlays_route(run_server):
     r = requests.get(url)
     assert r.status_code == 200
     assert r.headers['content-type'].find("json") != -1
+    assert r.headers['access-control-allow-origin'] == "*"
 
     expected_content = {
         "_links": {
@@ -121,6 +124,7 @@ def test_specific_item_route(run_server):
     r = requests.get(url)
     assert r.status_code == 200
     assert r.headers['content-type'].find("json") != -1
+    assert r.headers['access-control-allow-origin'] == "*"
 
     expected_content = {
         "_links": {
@@ -153,6 +157,7 @@ def test_specific_item_raw_route(run_server):
     r = requests.get(url)
     assert r.status_code == 200
     assert r.headers['content-type'].find("png") != -1
+    assert r.headers['access-control-allow-origin'] == "*"
     assert int(r.headers['content-length']) == 276
 
 
@@ -175,6 +180,7 @@ def test_specific_item_overlay_route(run_server):
     r = requests.get(url)
     assert r.status_code == 200
     assert r.headers['content-type'].find("json") != -1
+    assert r.headers['access-control-allow-origin'] == "*"
 
     expected_content = {"x": 4.0, "y": 5.6}
     assert r.json() == expected_content
@@ -205,6 +211,7 @@ def test_specific_overlay_route(run_server):
     r = requests.get(url)
     assert r.status_code == 200
     assert r.headers['content-type'].find("json") != -1
+    assert r.headers['access-control-allow-origin'] == "*"
 
     expected_content = {
         "290d3f1a902c452ce1c184ed793b1d6b83b59164": {"x": 4.0, "y": 5.6},
@@ -251,6 +258,7 @@ def test_update_specific_item_in_overlay(run_write_server):
     r = requests.get(url)
     assert r.status_code == 200
     assert r.headers['content-type'].find("json") != -1
+    assert r.headers['access-control-allow-origin'] == "*"
 
     expected_content = {"x": 4.0, "y": 5.6}
     assert r.json() == expected_content
