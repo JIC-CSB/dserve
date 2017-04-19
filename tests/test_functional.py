@@ -13,13 +13,12 @@ HERE = os.path.dirname(__file__)
 APP = os.path.join(HERE, "..", "dserve", "__init__.py")
 SAMPLE_DATASET_PATH = os.path.join(HERE, "data", "cotyledon_images")
 
-PORT = 5000
 TEST_SERVER = "http://127.0.0.1:{}"
 
 
 @pytest.fixture(scope="module")
 def run_server(request):
-    port = "5000"
+    port = "5001"
     server = subprocess.Popen(["python", APP, SAMPLE_DATASET_PATH, "-p", port])
     time.sleep(1)
 
@@ -35,7 +34,7 @@ def run_write_server(request):
     tmp_dataset_path = os.path.join(d, "cotyledon_images")
     shutil.copytree(SAMPLE_DATASET_PATH, tmp_dataset_path)
 
-    port = "5001"
+    port = "5002"
     server = subprocess.Popen(["python", APP, tmp_dataset_path, "-p", port])
     time.sleep(1)
 
