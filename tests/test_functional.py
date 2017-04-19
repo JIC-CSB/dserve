@@ -1,7 +1,6 @@
 """Functional tests for dserve server."""
 
 import os
-import signal
 import subprocess
 import shutil
 import time
@@ -37,7 +36,7 @@ def run_write_server(request):
     shutil.copytree(SAMPLE_DATASET_PATH, tmp_dataset_path)
 
     port = "5001"
-    server = subprocess.Popen(["python", APP, tmp_dataset_path, "-p", port,])
+    server = subprocess.Popen(["python", APP, tmp_dataset_path, "-p", port])
     time.sleep(1)
 
     @request.addfinalizer
@@ -271,13 +270,13 @@ def test_update_specific_item_in_overlay(run_write_server):
     r = requests.put(
         url,
         data={"x": 10.0, "y": -7.0},
-        headers={'content-type':'application/json'})
+        headers={'content-type': 'application/json'})
     assert r.status_code == 400
 
     r = requests.put(
         url,
         data='{"x": 10.0, "y": -7.0}',
-        headers={'content-type':'application/json'})
+        headers={'content-type': 'application/json'})
     assert r.status_code == 201
 
     r = requests.get(url)
@@ -295,8 +294,9 @@ def test_update_specific_item_in_nonexisting_overlay_404(run_write_server):
     r = requests.put(
         url,
         data='{"x": 10.0, "y": -7.0}',
-        headers={'content-type':'application/json'})
+        headers={'content-type': 'application/json'})
     assert r.status_code == 404
+
 
 def test_update_specific_nonsese_item_in_overlay_404(run_write_server):
     url = "/".join([
@@ -308,5 +308,5 @@ def test_update_specific_nonsese_item_in_overlay_404(run_write_server):
     r = requests.put(
         url,
         data='{"x": 10.0, "y": -7.0}',
-        headers={'content-type':'application/json'})
+        headers={'content-type': 'application/json'})
     assert r.status_code == 404
