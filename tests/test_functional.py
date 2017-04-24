@@ -309,6 +309,19 @@ def test_update_specific_item_in_overlay(run_write_server):
     assert r.json() == expected_content
 
 
+def test_update_specific_item_in_readonly_overlay(run_write_server):
+    url = "/".join([
+        run_write_server,
+        "overlays",
+        "hash",
+        "290d3f1a902c452ce1c184ed793b1d6b83b59164"])
+    r = requests.put(
+        url,
+        data='"alternative_identifier"',
+        headers={'content-type': 'application/json'})
+    assert r.status_code == 405
+
+
 def test_update_specific_item_in_nonexisting_overlay_404(run_write_server):
     url = "/".join([
         run_write_server,

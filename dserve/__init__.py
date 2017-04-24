@@ -135,8 +135,11 @@ def item_overlay_content(overlay, identifier):
             abort(422)
         new_value = request.get_json()
         requested_overlay[identifier] = new_value
-        app._dataset.persist_overlay(
-            overlay, requested_overlay, overwrite=True)
+        try:
+            app._dataset.persist_overlay(
+                overlay, requested_overlay, overwrite=True)
+        except KeyError:
+            abort(405)
         return "", 201
     elif request.method == "GET":
         value = requested_overlay[identifier]
