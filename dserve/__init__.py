@@ -36,20 +36,12 @@ def root():
 
 
 def items_root():
-    overlays = app._dataset.access_overlays()
-
-    total_size = 0
     items = []
     for i in app._dataset.manifest["file_list"]:
-        total_size += i["size"]
         item = {
             "_links": {"self": {"href": "/items/{}".format(i["hash"])}},
             "identifier": i["hash"],
-            "mimetype": i["mimetype"],
-            "size": i["size"]
         }
-        for key, value in overlays.items():
-            item[key] = value[i["hash"]]
         items.append(item)
 
     content = {
@@ -58,8 +50,6 @@ def items_root():
         },
         "_embedded": {
             "items": items,
-            "number_of_items": len(items),
-            "total_size": total_size
         }
     }
     return jsonify(content)
@@ -74,15 +64,12 @@ def specific_item(identifier):
         "_links": {
             "self": {"href": "/items/{}".format(identifier)},
             "content": {"href": "/items/{}/raw".format(identifier)},
+            "overlays": {"href": "/items/{}/overlays".format(identifier)},
         },
-        "mimetype": item["mimetype"],
-        "size": item["size"]
     }
 
     overlays = app._dataset.access_overlays()
     for overlay_name, overlay in overlays.items():
-        olink = {"href": "/items/{}/{}".format(identifier, overlay_name)}
-        content["_links"][overlay_name] = olink
         content[overlay_name] = overlay[identifier]
 
     return jsonify(content)

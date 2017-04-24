@@ -82,18 +82,10 @@ def test_items_route(run_server):
             "items": [{
                 "_links": {"self": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164"}},  # NOQA
                 "identifier": "290d3f1a902c452ce1c184ed793b1d6b83b59164",
-                "coordinates": {"x": 4.0, "y": 5.6},
-                "mimetype": "image/png",
-                "size": 276
             }, {
                 "_links": {"self": {"href": "/items/09648d19e11f0b20e5473594fc278afbede3c9a4"}},  # NOQA
                 "identifier": "09648d19e11f0b20e5473594fc278afbede3c9a4",
-                "coordinates": {"x": 80.8, "y": 3.3},
-                "mimetype": "image/png",
-                "size": 276
             }],
-            "number_of_items": 2,
-            "total_size": 552
         }
     }
     assert r.json() == expected_content
@@ -134,10 +126,13 @@ def test_specific_item_route(run_server):
         "_links": {
             "self": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164"},  # NOQA
             "content": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164/raw"},  # NOQA
-            "coordinates": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164/coordinates"}  # NOQA
+            "overlays": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164/overlays"}  # NOQA
         },
         "coordinates": {"x": 4.0, "y": 5.6},
+        "hash": "290d3f1a902c452ce1c184ed793b1d6b83b59164",
         "mimetype": "image/png",
+        "mtime": 1491989058.0,
+        "path": "first_image.png",
         "size": 276
     }
     assert r.json() == expected_content
