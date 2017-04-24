@@ -36,7 +36,7 @@ def root():
 
 
 def items_root():
-    overlays = app._dataset.overlays
+    overlays = app._dataset.access_overlays()
 
     total_size = 0
     items = []
@@ -67,7 +67,7 @@ def items_root():
 
 def specific_item(identifier):
     try:
-        item = app._dataset.item_from_hash(identifier)
+        item = app._dataset.item_from_identifier(identifier)
     except KeyError:
         abort(404)
     content = {
@@ -79,7 +79,7 @@ def specific_item(identifier):
         "size": item["size"]
     }
 
-    overlays = app._dataset.overlays
+    overlays = app._dataset.access_overlays()
     for overlay_name, overlay in overlays.items():
         olink = {"href": "/items/{}/{}".format(identifier, overlay_name)}
         content["_links"][overlay_name] = olink
@@ -102,7 +102,7 @@ def items(identifier=None):
 @cross_origin()
 def raw_item(identifier):
     try:
-        item = app._dataset.item_from_hash(identifier)
+        item = app._dataset.item_from_identifier(identifier)
     except KeyError:
         abort(404)
     item_path = os.path.join(
@@ -116,7 +116,7 @@ def raw_item(identifier):
 @app.route("/items/<identifier>/<overlay>", methods=["GET", "PUT"])
 @cross_origin()
 def item_overlay_content(identifier, overlay):
-    overlays = app._dataset.overlays
+    overlays = app._dataset.access_overlays()
     try:
         requested_overlay = overlays[overlay]
         requested_overlay[identifier]
@@ -137,7 +137,7 @@ def item_overlay_content(identifier, overlay):
 
 
 def overlay_root():
-    overlays = app._dataset.overlays
+    overlays = app._dataset.access_overlays()
     content = {
         "_links": {
             "self": {"href": "/overlays"}},
@@ -149,7 +149,7 @@ def overlay_root():
 
 
 def specific_overlay(overlay_name):
-    overlays = app._dataset.overlays
+    overlays = app._dataset.access_overlays()
     try:
         overlay = overlays[overlay_name]
     except KeyError:
