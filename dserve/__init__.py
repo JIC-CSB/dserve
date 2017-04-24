@@ -100,6 +100,26 @@ def raw_item(identifier):
     return send_file(item_path, item["mimetype"])
 
 
+@app.route("/items/<identifier>/overlays")
+@cross_origin()
+def item_overlays(identifier):
+    try:
+        item = app._dataset.item_from_identifier(identifier)
+    except KeyError:
+        abort(404)
+    content = {
+        "_links": {
+            "self": {"href": "/items/{}/overlays".format(identifier)},
+        },
+    }
+    overlays = app._dataset.access_overlays()
+    for overlay_name in overlays.keys():
+        href = "/overlays/{}/{}".format(overlay_name, identifier)
+        content["_links"][overlay_name] = {"href": href}
+
+    return jsonify(content)
+
+
 @app.route("/items/<identifier>/<overlay>", methods=["GET", "PUT"])
 @cross_origin()
 def item_overlay_content(identifier, overlay):

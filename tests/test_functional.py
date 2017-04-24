@@ -170,27 +170,39 @@ def test_nonexisting_specific_item_raw_route(run_server):
     assert r.status_code == 404
 
 
-def test_specific_item_overlay_route(run_server):
+def test_specific_item_overlays_route(run_server):
     url = "/".join([
         run_server,
         "items",
         "290d3f1a902c452ce1c184ed793b1d6b83b59164",
-        "coordinates"])
+        "overlays"])
     r = requests.get(url)
     assert r.status_code == 200
     assert r.headers['content-type'].find("json") != -1
     assert r.headers['access-control-allow-origin'] == "*"
 
-    expected_content = {"x": 4.0, "y": 5.6}
+    expected_content = {
+        "_links": {
+            "self": {"href": "/items/290d3f1a902c452ce1c184ed793b1d6b83b59164/overlays"},  # NOQA
+            "coordinates": {"href": "/overlays/coordinates/290d3f1a902c452ce1c184ed793b1d6b83b59164"},
+            "hash": {"href": "/overlays/hash/290d3f1a902c452ce1c184ed793b1d6b83b59164"},
+            "size": {"href": "/overlays/size/290d3f1a902c452ce1c184ed793b1d6b83b59164"},
+            "path": {"href": "/overlays/path/290d3f1a902c452ce1c184ed793b1d6b83b59164"},
+            "mimetype": {"href": "/overlays/mimetype/290d3f1a902c452ce1c184ed793b1d6b83b59164"},
+            "mtime": {"href": "/overlays/mtime/290d3f1a902c452ce1c184ed793b1d6b83b59164"}
+        }
+    }
+    import pprint
+    pprint.pprint(r.json())
     assert r.json() == expected_content
 
 
-def test_nonexisting_specific_item_overlay_route(run_server):
+def test_nonexisting_specific_item_overlays_route(run_server):
     url = "/".join([
         run_server,
         "items",
         "nonsense",
-        "coordinates"])
+        "overlays"])
     r = requests.get(url)
     assert r.status_code == 404
 
