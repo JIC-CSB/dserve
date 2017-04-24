@@ -192,8 +192,6 @@ def test_specific_item_overlays_route(run_server):
             "mtime": {"href": "/overlays/mtime/290d3f1a902c452ce1c184ed793b1d6b83b59164"}
         }
     }
-    import pprint
-    pprint.pprint(r.json())
     assert r.json() == expected_content
 
 
@@ -207,12 +205,27 @@ def test_nonexisting_specific_item_overlays_route(run_server):
     assert r.status_code == 404
 
 
+def test_specific_item_overlay_route(run_server):
+    url = "/".join([
+        run_server,
+        "overlays",
+        "hash",
+        "290d3f1a902c452ce1c184ed793b1d6b83b59164"])
+    r = requests.get(url)
+    assert r.status_code == 200
+    assert r.headers['content-type'].find("json") != -1
+    assert r.headers['access-control-allow-origin'] == "*"
+
+    expected_content = "290d3f1a902c452ce1c184ed793b1d6b83b59164"
+    assert r.json() == expected_content
+
+
 def test_specific_item_nonexisting_overlay_route(run_server):
     url = "/".join([
         run_server,
-        "items",
-        "290d3f1a902c452ce1c184ed793b1d6b83b59164",
-        "nonsense"])
+        "overlays",
+        "nonsense",
+        "290d3f1a902c452ce1c184ed793b1d6b83b59164"])
     r = requests.get(url)
     assert r.status_code == 404
 
@@ -263,9 +276,9 @@ def test_create_new_overlay_does_not_overwrite(run_write_server):
 def test_update_specific_item_in_overlay(run_write_server):
     url = "/".join([
         run_write_server,
-        "items",
-        "290d3f1a902c452ce1c184ed793b1d6b83b59164",
-        "coordinates"])
+        "overlays",
+        "coordinates",
+        "290d3f1a902c452ce1c184ed793b1d6b83b59164"])
     r = requests.get(url)
     assert r.status_code == 200
     assert r.headers['content-type'].find("json") != -1

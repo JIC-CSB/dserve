@@ -120,9 +120,9 @@ def item_overlays(identifier):
     return jsonify(content)
 
 
-@app.route("/items/<identifier>/<overlay>", methods=["GET", "PUT"])
+@app.route("/overlays/<overlay>/<identifier>", methods=["GET", "PUT"])
 @cross_origin()
-def item_overlay_content(identifier, overlay):
+def item_overlay_content(overlay, identifier):
     overlays = app._dataset.access_overlays()
     try:
         requested_overlay = overlays[overlay]
