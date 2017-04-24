@@ -109,7 +109,13 @@ def test_overlays_route(run_server):
     expected_content = {
         "_links": {
             "self": {"href": "/overlays"},
-            "coordinates": {"href": "/overlays/coordinates"}},
+            "coordinates": {"href": "/overlays/coordinates"},
+            "hash": {"href": "/overlays/hash"},
+            "size": {"href": "/overlays/size"},
+            "path": {"href": "/overlays/path"},
+            "mimetype": {"href": "/overlays/mimetype"},
+            "mtime": {"href": "/overlays/mtime"}
+        },
     }
     assert r.json() == expected_content
 
