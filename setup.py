@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = "0.1.0"
+version = "0.1.1"
 url = "https://github.com/JIC-CSB/dserve"
 readme = open('README.rst').read()
 
