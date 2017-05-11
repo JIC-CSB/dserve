@@ -9,4 +9,7 @@ setup(
         'flask',
         'flask_cors',
     ],
+    entry_points={
+        'console_scripts': ['dserve=dserve.cli:main']
+    },
 )

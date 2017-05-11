@@ -1,7 +1,6 @@
 """Script for running the dserve server."""
 
 import os
-import argparse
 
 from flask import (
     Flask,
@@ -12,7 +11,6 @@ from flask import (
 )
 from flask_cors import CORS, cross_origin
 
-from dtoolcore import DataSet
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -57,7 +55,7 @@ def items_root():
 
 def specific_item(identifier):
     try:
-        item = app._dataset.item_from_identifier(identifier)
+        app._dataset.item_from_identifier(identifier)
     except KeyError:
         abort(404)
     content = {
@@ -93,8 +91,8 @@ def raw_item(identifier):
     except KeyError:
         abort(404)
     item_path = os.path.join(
-        dataset._abs_path,
-        dataset.data_directory,
+        app._dataset._abs_path,
+        app._dataset.data_directory,
         item["path"]
     )
     return send_file(item_path, item["mimetype"])
@@ -104,7 +102,7 @@ def raw_item(identifier):
 @cross_origin()
 def item_overlays(identifier):
     try:
-        item = app._dataset.item_from_identifier(identifier)
+        app._dataset.item_from_identifier(identifier)
     except KeyError:
         abort(404)
     content = {
@@ -187,18 +185,3 @@ def overalys(overlay_name=None):
             return creaate_new_overlay(overlay_name)
         elif request.method == "GET":
             return specific_overlay(overlay_name)
-
-
-def main(dataset, port, debug):
-    app._dataset = dataset
-    app.run(port=port, debug=debug)
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("dataset_path")
-    parser.add_argument("-p", "--port", type=int, default=5000)
-    parser.add_argument("--debug", action="store_true")
-    args = parser.parse_args()
-    dataset = DataSet.from_path(args.dataset_path)
-    main(dataset, args.port, args.debug)

@@ -10,7 +10,7 @@ import pytest
 import requests
 
 HERE = os.path.dirname(__file__)
-APP = os.path.join(HERE, "..", "dserve", "__init__.py")
+APP = os.path.join(HERE, "..", "dserve", "cli.py")
 SAMPLE_DATASET_PATH = os.path.join(HERE, "data", "cotyledon_images")
 
 TEST_SERVER = "http://127.0.0.1:{}"
@@ -19,7 +19,7 @@ TEST_SERVER = "http://127.0.0.1:{}"
 @pytest.fixture(scope="module")
 def run_server(request):
     port = "5001"
-    server = subprocess.Popen(["python", APP, SAMPLE_DATASET_PATH, "-p", port])
+    server = subprocess.Popen(["python", APP, "-d", SAMPLE_DATASET_PATH, "-p", port])
     time.sleep(1)
 
     @request.addfinalizer
@@ -35,7 +35,7 @@ def run_write_server(request):
     shutil.copytree(SAMPLE_DATASET_PATH, tmp_dataset_path)
 
     port = "5002"
-    server = subprocess.Popen(["python", APP, tmp_dataset_path, "-p", port])
+    server = subprocess.Popen(["python", APP, "-d", tmp_dataset_path, "-p", port])
     time.sleep(1)
 
     @request.addfinalizer
@@ -44,6 +44,35 @@ def run_write_server(request):
         shutil.rmtree(d)
 
     return TEST_SERVER.format(port)
+
+
+@pytest.fixture()
+def run_cli_server(request):
+    d = tempfile.mkdtemp()
+    tmp_dataset_path = os.path.join(d, "cotyledon_images")
+    shutil.copytree(SAMPLE_DATASET_PATH, tmp_dataset_path)
+
+    port = "5003"
+    test_env = os.environ.copy()
+    test_env["FLASK_APP"] = "dserve"
+    test_env["DSERVE_DATASET_PATH"] = tmp_dataset_path
+    server = subprocess.Popen(
+        ["dserve", "-p", port],
+        env=test_env)
+    time.sleep(1)
+
+    @request.addfinalizer
+    def teardown():
+        server.terminate()
+        shutil.rmtree(d)
+
+    return TEST_SERVER.format(port)
+
+
+def test_cli_server(run_cli_server):
+    url = run_cli_server
+    r = requests.get(url)
+    assert r.status_code == 200
 
 
 def test_root_route(run_server):
