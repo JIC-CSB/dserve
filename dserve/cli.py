@@ -18,7 +18,7 @@ def main():
         parser.error("Please specify a dataset path")
     dataset = DataSet.from_path(args.dataset_path)
     app._dataset = dataset
-    app.run(port=args.port, debug=args.debug)
+    app.run(port=args.port, debug=args.debug, host="0.0.0.0")
 
 
 if __name__ == '__main__':
